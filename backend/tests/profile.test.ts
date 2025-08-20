@@ -1,6 +1,5 @@
 import request from "supertest";
-import express from "express";
-import profileRoutes from "../src/routes/profile";
+import { app } from "./setup"; // Assuming you have an app export in your main app file
 
 // Mock authenticate middleware
 jest.mock("../src/middleware/auth", () => ({
@@ -50,10 +49,6 @@ jest.mock("../src/db", () => {
     },
   };
 });
-
-const app = express();
-app.use(express.json());
-app.use("/api/profile", profileRoutes);
 
 describe("Profile Controller", () => {
   it("should get profile", async () => {

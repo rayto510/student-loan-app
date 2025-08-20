@@ -6,6 +6,11 @@ import { Loan } from "../models/loan";
 
 export const getLoans = async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const result = await pool.query("SELECT * FROM loans WHERE user_id=$1", [
     userId,
   ]);
@@ -14,6 +19,11 @@ export const getLoans = async (req: Request, res: Response) => {
 
 export const addLoan = async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { amount, interest_rate, due_date, type } = req.body;
   const result = await pool.query(
     "INSERT INTO loans (user_id, amount, interest_rate, due_date, type) VALUES ($1,$2,$3,$4,$5) RETURNING *",
@@ -24,6 +34,11 @@ export const addLoan = async (req: Request, res: Response) => {
 
 export const updateLoan = async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { id } = req.params;
   const { amount, interest_rate, due_date, type } = req.body;
   const result = await pool.query(

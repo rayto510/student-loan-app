@@ -2,8 +2,12 @@ import { Request, Response } from "express";
 import { pool } from "../db";
 
 export const getNotifications = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  const userId = req.user.id;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const result = await pool.query(
     "SELECT * FROM notifications WHERE user_id = $1",
     [userId]
@@ -12,8 +16,12 @@ export const getNotifications = async (req: Request, res: Response) => {
 };
 
 export const addNotification = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  const userId = req.user.id;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { message, date } = req.body;
   const result = await pool.query(
     "INSERT INTO notifications (user_id, message, date) VALUES ($1, $2, $3) RETURNING *",
@@ -23,8 +31,12 @@ export const addNotification = async (req: Request, res: Response) => {
 };
 
 export const updateNotification = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  const userId = req.user.id;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { id } = req.params;
   const { message, date } = req.body;
   const result = await pool.query(
@@ -35,8 +47,12 @@ export const updateNotification = async (req: Request, res: Response) => {
 };
 
 export const deleteNotification = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
-  const userId = req.user.id;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { id } = req.params;
   await pool.query("DELETE FROM notifications WHERE id = $1 AND user_id = $2", [
     id,

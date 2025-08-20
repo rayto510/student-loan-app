@@ -1,7 +1,6 @@
 import request from "supertest";
-import express from "express";
-import loanRoutes from "../src/routes/loans";
 import { pool } from "../src/db";
+import { app } from "./setup"; // Assuming you have an app export in your main app file
 
 jest.mock("../src/db", () => ({
   pool: {
@@ -63,10 +62,6 @@ jest.mock("../src/middleware/auth", () => ({
     next();
   },
 }));
-
-const app = express();
-app.use(express.json());
-app.use("/api/loans", loanRoutes);
 
 describe("Loans Controller", () => {
   it("should get all loans for user", async () => {

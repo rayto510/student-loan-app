@@ -1,10 +1,5 @@
 import request from "supertest";
-import express from "express";
-import payoffRoutes from "../src/routes/payoff";
-
-const app = express();
-app.use(express.json());
-app.use("/api/payoff", payoffRoutes);
+import { app } from "./setup"; // Assuming you have an app export in your main app file
 
 jest.mock("../src/db", () => ({
   pool: {

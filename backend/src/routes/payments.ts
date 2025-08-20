@@ -6,10 +6,11 @@ import {
   deletePayment,
 } from "../controllers/paymentsController";
 
-const router = express.Router({ mergeParams: true });
+const router = express.Router({ mergeParams: true }); // keeps loanId from parent
 
-router.get("/:id/payments", authenticate, getPayments);
-router.post("/:id/payments", authenticate, addPayment);
-router.delete("/:id/payments/:paymentId", authenticate, deletePayment);
+// The routes are relative to /api/loans/:loanId/payments
+router.get("/", authenticate, getPayments);
+router.post("/", authenticate, addPayment);
+router.delete("/:paymentId", authenticate, deletePayment);
 
 export default router;

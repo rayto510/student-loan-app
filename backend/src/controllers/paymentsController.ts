@@ -2,9 +2,13 @@ import { Request, Response } from "express";
 import { pool } from "../db";
 
 export const getPayments = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const loanId = req.params.id;
-  const userId = req.user.id;
 
   const result = await pool.query(
     "SELECT * FROM payments WHERE loan_id = $1 AND user_id = $2",
@@ -14,9 +18,13 @@ export const getPayments = async (req: Request, res: Response) => {
 };
 
 export const addPayment = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const loanId = req.params.id;
-  const userId = req.user.id;
   const { amount, date } = req.body;
 
   if (amount <= 0)
@@ -30,9 +38,13 @@ export const addPayment = async (req: Request, res: Response) => {
 };
 
 export const deletePayment = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { id: loanId, paymentId } = req.params;
-  const userId = req.user.id;
 
   await pool.query(
     "DELETE FROM payments WHERE id = $1 AND loan_id = $2 AND user_id = $3",

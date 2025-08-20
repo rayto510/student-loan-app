@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">88.23% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>30/30</span>
+                <span class='fraction'>30/34</span>
             </div>
         
             
@@ -115,13 +115,33 @@
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -131,7 +151,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -142,12 +166,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -163,7 +191,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -172,8 +204,12 @@ import { pool } from "../db";
 import bcrypt from "bcrypt";
 &nbsp;
 export const getProfile = async (req: Request, res: Response) =&gt; {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.user) <span class="cstat-no" title="statement not covered" >return res.status(401).json({ message: "Unauthorized" });</span>
-  const userId = req.user.id;
+  const userId = req.user?.id;
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!userId) {
+<span class="cstat-no" title="statement not covered" >    return res.status(401).json({ message: "Unauthorized" });</span>
+  }
+&nbsp;
   const result = await pool.query(
     "SELECT id, name, email FROM users WHERE id = $1",
     [userId]
@@ -182,8 +218,12 @@ export const getProfile = async (req: Request, res: Response) =&gt; {
 };
 &nbsp;
 export const updateProfile = async (req: Request, res: Response) =&gt; {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.user) <span class="cstat-no" title="statement not covered" >return res.status(401).json({ message: "Unauthorized" });</span>
-  const userId = req.user.id;
+  const userId = req.user?.id;
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!userId) {
+<span class="cstat-no" title="statement not covered" >    return res.status(401).json({ message: "Unauthorized" });</span>
+  }
+&nbsp;
   const { name, email } = req.body;
   const result = await pool.query(
     "UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email",
@@ -193,8 +233,12 @@ export const updateProfile = async (req: Request, res: Response) =&gt; {
 };
 &nbsp;
 export const changePassword = async (req: Request, res: Response) =&gt; {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.user) <span class="cstat-no" title="statement not covered" >return res.status(401).json({ message: "Unauthorized" });</span>
-  const userId = req.user.id;
+  const userId = req.user?.id;
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!userId) {
+<span class="cstat-no" title="statement not covered" >    return res.status(401).json({ message: "Unauthorized" });</span>
+  }
+&nbsp;
   const { oldPassword, newPassword } = req.body;
   const userRes = await pool.query("SELECT password FROM users WHERE id = $1", [
     userId,
@@ -214,8 +258,12 @@ export const changePassword = async (req: Request, res: Response) =&gt; {
 };
 &nbsp;
 export const deleteAccount = async (req: Request, res: Response) =&gt; {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.user) <span class="cstat-no" title="statement not covered" >return res.status(401).json({ message: "Unauthorized" });</span>
-  const userId = req.user.id;
+  const userId = req.user?.id;
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!userId) {
+<span class="cstat-no" title="statement not covered" >    return res.status(401).json({ message: "Unauthorized" });</span>
+  }
+&nbsp;
   await pool.query("DELETE FROM users WHERE id = $1", [userId]);
   res.json({ message: "Account deleted" });
 };
@@ -226,7 +274,7 @@ export const deleteAccount = async (req: Request, res: Response) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-20T21:47:24.684Z
+                at 2025-08-20T22:07:45.649Z
             </div>
         <script src="../prettify.js"></script>
         <script>

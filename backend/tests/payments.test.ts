@@ -1,6 +1,5 @@
 import request from "supertest";
-import express from "express";
-import paymentsRoutes from "../src/routes/payments";
+import { app } from "./setup";
 
 jest.mock("../src/middleware/auth", () => ({
   authenticate: (req: any, res: any, next: any) => {
@@ -45,10 +44,6 @@ jest.mock("../src/db", () => ({
     }),
   },
 }));
-
-const app = express();
-app.use(express.json());
-app.use("/api/loans", paymentsRoutes);
 
 describe("Payments Controller", () => {
   it("should get payments", async () => {

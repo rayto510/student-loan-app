@@ -1,8 +1,7 @@
 import request from "supertest";
-import express from "express";
-import authRoutes from "../src/routes/auth";
 import { pool } from "../src/db";
 import bcrypt from "bcrypt";
+import { app } from "./setup"; // Assuming you have an app export in your main app file
 import jwt from "jsonwebtoken";
 
 jest.mock("../src/db", () => ({
@@ -29,10 +28,6 @@ jest.mock("../src/db", () => ({
     }),
   },
 }));
-
-const app = express();
-app.use(express.json());
-app.use("/api/auth", authRoutes);
 
 describe("Auth Controller", () => {
   it("should signup a new user", async () => {

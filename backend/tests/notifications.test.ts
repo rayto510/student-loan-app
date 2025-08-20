@@ -1,6 +1,5 @@
 import request from "supertest";
-import express from "express";
-import notificationsRoutes from "../src/routes/notifications";
+import { app } from "./setup"; // Assuming you have an app export in your main app file
 
 jest.mock("../src/middleware/auth", () => ({
   authenticate: (req: any, res: any, next: any) => {
@@ -50,10 +49,6 @@ jest.mock("../src/db", () => ({
     }),
   },
 }));
-
-const app = express();
-app.use(express.json());
-app.use("/api/notifications", notificationsRoutes);
 
 describe("Notifications Controller", () => {
   it("should get notifications", async () => {

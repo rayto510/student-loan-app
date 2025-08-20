@@ -8,3 +8,13 @@ declare module "express-serve-static-core" {
     };
   }
 }
+
+declare module "express" {
+  export interface Request {
+    user?: {
+      id: number;
+      name?: string;
+      email?: string;
+    };
+  }
+}
