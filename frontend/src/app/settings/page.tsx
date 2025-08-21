@@ -1,30 +1,115 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { User, Mail, Lock, CheckCircle2 } from "lucide-react";
+import {
+  getProfile,
+  updatePassword,
+  updateProfile,
+  updateSavePrefs,
+} from "@/lib/profile";
 
 export default function SettingsPage() {
   const [profileSaved, setProfileSaved] = useState(false);
   const [passwordUpdated, setPasswordUpdated] = useState(false);
   const [prefsSaved, setPrefsSaved] = useState(false);
 
-  const handleSaveProfile = () => {
-    setProfileSaved(true);
-    setTimeout(() => setProfileSaved(false), 1500);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [smsAlerts, setSmsAlerts] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    async function fetchProfile() {
+      if (!token) return;
+      try {
+        const profile = await getProfile(token);
+        setName(profile.name || "");
+        setEmail(profile.email || "");
+        setEmailNotifications(profile.emailNotifications ?? true);
+        setSmsAlerts(profile.smsAlerts ?? false);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error("Failed to fetch profile", err.message);
+        } else {
+          console.error("Failed to fetch profile", err);
+        }
+      }
+    }
+
+    fetchProfile();
+  }, []);
+
+  const handleSavePrefs = async () => {
+    try {
+      await updateSavePrefs("/users/preferences", {
+        emailNotifications,
+        smsAlerts,
+      });
+      setPrefsSaved(true);
+      setTimeout(() => setPrefsSaved(false), 1500);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }
   };
 
-  const handleUpdatePassword = () => {
-    setPasswordUpdated(true);
-    setTimeout(() => setPasswordUpdated(false), 1500);
+  const handleUpdatePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      await updatePassword(token, {
+        oldPassword,
+        newPassword,
+      });
+      setPasswordUpdated(true);
+      setTimeout(() => setPasswordUpdated(false), 1500);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }
   };
 
-  const handleSavePrefs = () => {
-    setPrefsSaved(true);
-    setTimeout(() => setPrefsSaved(false), 1500);
+  const handleSaveProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      await updateProfile(token, { name, email });
+      setProfileSaved(true);
+      setTimeout(() => setProfileSaved(false), 1500);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }
   };
 
   return (
@@ -54,6 +139,8 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="flex-1 outline-none border-none text-slate-900"
                 />
               </div>
@@ -66,6 +153,8 @@ export default function SettingsPage() {
                 <input
                   type="email"
                   placeholder="john@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 outline-none border-none text-slate-900"
                 />
               </div>
@@ -105,6 +194,8 @@ export default function SettingsPage() {
                   type="password"
                   placeholder="********"
                   className="flex-1 outline-none border-none text-slate-900"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -117,6 +208,8 @@ export default function SettingsPage() {
                   type="password"
                   placeholder="********"
                   className="flex-1 outline-none border-none text-slate-900"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -131,6 +224,8 @@ export default function SettingsPage() {
                   type="password"
                   placeholder="********"
                   className="flex-1 outline-none border-none text-slate-900"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -167,11 +262,21 @@ export default function SettingsPage() {
             <span className="text-slate-700 font-medium">
               Email Notifications
             </span>
-            <input type="checkbox" className="w-5 h-5 accent-indigo-600" />
+            <input
+              type="checkbox"
+              className="w-5 h-5 accent-indigo-600"
+              checked={emailNotifications}
+              onChange={(e) => setEmailNotifications(e.target.checked)}
+            />
           </div>
           <div className="flex justify-between items-center">
             <span className="text-slate-700 font-medium">SMS Alerts</span>
-            <input type="checkbox" className="w-5 h-5 accent-indigo-600" />
+            <input
+              type="checkbox"
+              className="w-5 h-5 accent-indigo-600"
+              checked={smsAlerts}
+              onChange={(e) => setSmsAlerts(e.target.checked)}
+            />
           </div>
           <Button
             onClick={handleSavePrefs}
