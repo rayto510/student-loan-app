@@ -28,6 +28,11 @@ export default function DashboardSidebar({
 }) {
   const pathname = usePathname();
 
+  function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  }
+
   return (
     <aside
       className={cn(
@@ -92,6 +97,7 @@ export default function DashboardSidebar({
           className={cn(
             "w-full flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-all justify-center"
           )}
+          onClick={logout}
         >
           <LogOutIcon className="w-5 h-5" />
           {open && <span className="truncate">Logout</span>}

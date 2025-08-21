@@ -1,37 +1,49 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowUp, Clock, DollarSign } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
+import { DollarSign, Clock } from "lucide-react";
+import { getLoans } from "@/lib/loan";
 
-// Example monthly payment data
-const monthlyPayments = [
-  { month: "Jan", amount: 300 },
-  { month: "Feb", amount: 400 },
-  { month: "Mar", amount: 350 },
-  { month: "Apr", amount: 450 },
-  { month: "May", amount: 500 },
-  { month: "Jun", amount: 400 },
-];
-
-const loans = [
-  { name: "Federal Loan", balance: 7200, progress: 50 },
-  { name: "Private Loan", balance: 5250, progress: 75 },
-  { name: "Parent PLUS Loan", balance: 3000, progress: 20 },
-];
+type Loan = {
+  id: string | number;
+  amount: number;
+  interest_rate: number;
+  due_date: string;
+  type: string;
+  original_amount?: number;
+};
 
 export default function DashboardPage() {
+  const [loans, setLoans] = useState<Loan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  useEffect(() => {
+    if (!token) return;
+    getLoans(token).then((data) => {
+      setLoans(data);
+      setLoading(false);
+    });
+  }, [token]);
+
+  if (loading) return <p>Loading...</p>;
+
+  const totalBalance = loans.reduce(
+    (sum, loan) => sum + Number(loan.amount),
+    0
+  );
+  const totalInterest = loans.reduce(
+    (sum, loan) =>
+      sum + (Number(loan.amount) * Number(loan.interest_rate)) / 100,
+    0
+  );
+
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-8 text-slate-900">Dashboard</h1>
@@ -40,24 +52,36 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300 group">
           <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-indigo-600" /> Total Balance
             </CardTitle>
             <span className="text-slate-800 truncate max-w-[6rem] sm:max-w-[8rem]">
-              <Badge variant="default">$12,450</Badge>
+              <Badge variant="default">${totalBalance.toLocaleString()}</Badge>
             </span>
           </CardHeader>
           <CardContent>
-            <Progress value={60} className="h-2 rounded-full" />
-            <p className="mt-2 text-sm text-slate-600">
-              60% of total loans paid off
-            </p>
+            <Progress
+              value={0} // Placeholder, you can compute % paid off
+              className="h-2 rounded-full"
+            />
           </CardContent>
         </Card>
 
         <Card className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300 group">
           <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-green-600" /> Total Interest
+            </CardTitle>
+            <span className="text-green-600 truncate max-w-[6rem] sm:max-w-[8rem]">
+              <Badge>${totalInterest.toLocaleString()}</Badge>
+            </span>
+          </CardHeader>
+        </Card>
+
+        {/* Optional: Next Payment Card */}
+        <Card className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300 group">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <Clock className="w-5 h-5 text-indigo-600" /> Next Payment
             </CardTitle>
             <span className="text-slate-800 truncate max-w-[6rem] sm:max-w-[8rem]">
@@ -68,47 +92,7 @@ export default function DashboardPage() {
             <p className="text-sm text-slate-600">Due in 5 days</p>
           </CardContent>
         </Card>
-
-        <Card className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300 group">
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
-              <ArrowUp className="w-5 h-5 text-green-600" /> Payments This Month
-            </CardTitle>
-            <span className="text-green-600 truncate max-w-[5rem] sm:max-w-[6rem]">
-              <Badge variant="default">+ $1,200</Badge>
-            </span>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-slate-600">3 payments completed</p>
-          </CardContent>
-        </Card>
       </div>
-
-      {/* Monthly Payments Chart */}
-      <h2 className="text-2xl font-semibold mt-10 mb-4 text-slate-900">
-        Monthly Payments
-      </h2>
-      <Card className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300">
-        <CardContent className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={monthlyPayments}
-              margin={{ top: 20, right: 20, bottom: 20, left: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="amount"
-                stroke="#4f46e5"
-                strokeWidth={3}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
 
       {/* Loan Overview */}
       <h2 className="text-2xl font-semibold mt-10 mb-4 text-slate-900">
@@ -117,21 +101,39 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {loans.map((loan) => (
           <Card
-            key={loan.name}
+            key={loan.id}
             className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300 group"
           >
             <CardHeader className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
-                <DollarSign className="w-5 h-5 text-indigo-600" /> {loan.name}
+              <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-indigo-600" /> {loan.type}
               </CardTitle>
               <span className="truncate max-w-[5rem] sm:max-w-[6rem]">
-                <Badge>${loan.balance}</Badge>
+                <Badge>${Number(loan.amount).toLocaleString()}</Badge>
               </span>
             </CardHeader>
-            <CardContent>
-              <Progress value={loan.progress} className="h-2 rounded-full" />
-              <p className="mt-2 text-sm text-slate-600">
-                {loan.progress}% paid off
+            <CardContent className="space-y-1">
+              {loan.original_amount && (
+                <p className="text-slate-500">
+                  Original: ${Number(loan.original_amount).toLocaleString()}
+                </p>
+              )}
+              <p className="text-slate-500">
+                Interest: {Number(loan.interest_rate)}%
+              </p>
+              <p
+                className={`${
+                  new Date(loan.due_date) < new Date()
+                    ? "text-red-600 font-bold"
+                    : "text-slate-500"
+                }`}
+              >
+                Due:{" "}
+                {new Date(loan.due_date).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
               </p>
             </CardContent>
           </Card>
