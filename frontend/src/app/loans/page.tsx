@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { getLoans, addLoan } from "@/lib/loan";
+import { getLoans, addLoan, deleteLoan } from "@/lib/loan";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 type Loan = {
@@ -50,6 +50,17 @@ export default function LoansPage() {
     setInterestRate("");
     setDueDate("");
     setType("");
+  };
+
+  const handleDeleteLoan = async (id: number) => {
+    if (!token) return;
+    try {
+      await deleteLoan(token, id);
+      setLoans(loans.filter((loan) => loan.id !== id));
+    } catch (error) {
+      console.error("Failed to delete loan", error);
+      alert("Failed to delete loan");
+    }
   };
 
   return (
@@ -110,9 +121,22 @@ export default function LoansPage() {
                   <CardTitle className="text-lg font-semibold">
                     {loan.type}
                   </CardTitle>
-                  <span className="truncate max-w-[5rem] sm:max-w-[6rem]">
-                    <Badge>${Number(loan.amount).toLocaleString()}</Badge>
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="truncate max-w-[5rem] sm:max-w-[6rem]">
+                      <Badge>${Number(loan.amount).toLocaleString()}</Badge>
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="px-4 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500"
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent navigating to detail page
+                        handleDeleteLoan(Number(loan.id));
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {loan.original_amount && (

@@ -104,34 +104,36 @@ export default function LoanDetailPage() {
           .map((p) => (
             <Card
               key={p.id}
-              className="flex justify-between items-center rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200"
+              className="shadow-lg rounded-2xl border border-slate-200 hover:shadow-2xl transition-all duration-300 cursor-pointer"
             >
-              {/* Left side - Payment info */}
-              <div className="flex flex-col">
-                <p className="text-xl font-bold text-slate-800">
-                  ${Number(p.amount ?? 0).toLocaleString()}
-                </p>
-                <p className="text-sm text-slate-500 mt-1">
-                  {p.date
-                    ? new Date(p.date).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })
-                    : "No date"}
-                </p>
-              </div>
+              <div className="flex justify-between items-center p-4">
+                {/* Left side - Payment info */}
+                <div className="flex flex-col">
+                  <p className="text-xl font-bold text-slate-800">
+                    ${Number(p.amount ?? 0).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    {p.date
+                      ? new Date(p.date).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "No date"}
+                  </p>
+                </div>
 
-              {/* Right side - Actions */}
-              <div className="flex items-center space-x-3">
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  className="px-4 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500"
-                  onClick={() => handleDeletePayment(p.id)}
-                >
-                  Delete
-                </Button>
+                {/* Right side - Actions */}
+                <div className="flex items-center space-x-3">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="px-4 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500"
+                    onClick={() => handleDeletePayment(p.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}
