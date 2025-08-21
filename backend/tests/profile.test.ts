@@ -11,7 +11,7 @@ jest.mock("../src/middleware/auth", () => ({
 
 // Mock database
 jest.mock("../src/db", () => {
-  const bcrypt = require("bcrypt");
+  const bcrypt = require("bcryptjs");
   const hash = bcrypt.hashSync("oldpass", 1); // use small salt rounds for speed in tests
 
   return {
@@ -26,6 +26,8 @@ jest.mock("../src/db", () => {
                 name: "Alice",
                 email: "alice@example.com",
                 password: hash,
+                email_notifications: true,
+                sms_alerts: false,
               },
             ],
           });
@@ -40,6 +42,15 @@ jest.mock("../src/db", () => {
         if (query.startsWith("UPDATE users SET password")) {
           return Promise.resolve({ rows: [] });
         }
+        // Handle preference update
+        if (query.startsWith("UPDATE users SET email_notifications")) {
+          return Promise.resolve({
+            rows: [
+              { id: 1, email_notifications: params[0], sms_alerts: params[1] },
+            ],
+          });
+        }
+
         // Handle delete
         if (query.startsWith("DELETE FROM users")) {
           return Promise.resolve({ rows: [] });
@@ -73,6 +84,15 @@ describe("Profile Controller", () => {
       .send({ oldPassword: "oldpass", newPassword: "newpass" });
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toBe("Password changed successfully");
+  });
+
+  it("should handle updating preferences", async () => {
+    const res = await request(app)
+      .put("/api/profile/preferences")
+      .send({ emailNotifications: false, smsAlerts: true });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.email_notifications).toBe(false);
+    expect(res.body.sms_alerts).toBe(true);
   });
 
   it("should fail change password with wrong old password", async () => {

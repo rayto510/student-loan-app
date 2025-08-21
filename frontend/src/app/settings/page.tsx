@@ -53,8 +53,10 @@ export default function SettingsPage() {
   }, []);
 
   const handleSavePrefs = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
     try {
-      await updateSavePrefs("/users/preferences", {
+      await updateSavePrefs(token, {
         emailNotifications,
         smsAlerts,
       });

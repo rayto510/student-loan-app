@@ -1,6 +1,6 @@
 import request from "supertest";
 import { pool } from "../src/db";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { app } from "./setup"; // Assuming you have an app export in your main app file
 import jwt from "jsonwebtoken";
 

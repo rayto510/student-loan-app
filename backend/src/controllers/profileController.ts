@@ -31,6 +31,32 @@ export const updateProfile = async (req: Request, res: Response) => {
   res.json(result.rows[0]);
 };
 
+export const updatePreferences = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { emailNotifications, smsAlerts } = req.body;
+
+  if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+  try {
+    const result = await pool.query(
+      `UPDATE users SET email_notifications = $1, sms_alerts = $2
+       WHERE id = $3
+       RETURNING email_notifications, sms_alerts`,
+      [emailNotifications, smsAlerts, userId]
+    );
+
+    // Ensure we always return a JSON object
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.json(result.rows[0]); // now guaranteed to be an object
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const changePassword = async (req: Request, res: Response) => {
   const userId = req.user?.id;
 
