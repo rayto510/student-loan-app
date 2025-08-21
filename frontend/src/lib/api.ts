@@ -1,4 +1,5 @@
 // lib/api.ts
+export const API_HOST = "http://localhost:8080";
 export const API_BASE = "/api";
 
 export async function apiFetch(
@@ -12,7 +13,7 @@ export async function apiFetch(
     ...options.headers,
   };
 
-  const res = await fetch(`${API_BASE}${endpoint}`, {
+  const res = await fetch(`${API_HOST}${API_BASE}${endpoint}`, {
     ...options,
     headers,
   });
