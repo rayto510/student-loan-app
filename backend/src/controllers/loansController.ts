@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { pool } from "../db";
-import { Loan } from "../models/loan";
 
 // Middleware should add req.user = { id: number }
 

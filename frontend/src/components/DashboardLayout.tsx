@@ -2,12 +2,14 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import DashboardSidebar from "./DashboardSidebar";
+import { getProfile } from "@/lib/profile";
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [firstName, setFirstName] = useState("");
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [userToggled, setUserToggled] = useState(false);
@@ -33,6 +35,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, [open, userToggled]);
 
+  useEffect(() => {
+    async function fetchProfile() {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const data = await getProfile(token);
+      if (data.name) {
+        // Extract first name
+        setFirstName(data.name.split(" ")[0]);
+      } else {
+        setFirstName("");
+      }
+    }
+    fetchProfile();
+  }, []);
+
   if (!mounted) return null;
 
   return (
@@ -50,11 +68,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <header className="h-16 bg-white shadow-sm flex items-center justify-between px-8 border-b border-slate-200">
           <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <div className="w-8 h-8 rounded-full bg-slate-400" />
-            </div>
-            <span className="text-slate-700 font-medium">Hello, John</span>
+            <span className="text-slate-700 font-medium">
+              Hello, {firstName}
+            </span>
           </div>
         </header>
 
