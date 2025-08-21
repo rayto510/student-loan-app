@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { pool } from "../db";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export const getProfile = async (req: Request, res: Response) => {
   const userId = req.user?.id;

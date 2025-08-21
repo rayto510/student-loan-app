@@ -43,12 +43,9 @@ export default function DashboardPage() {
             <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
               <DollarSign className="w-5 h-5 text-indigo-600" /> Total Balance
             </CardTitle>
-            <Badge
-              variant="secondary"
-              className="text-slate-800 truncate max-w-[6rem] sm:max-w-[8rem]"
-            >
-              $12,450
-            </Badge>
+            <span className="text-slate-800 truncate max-w-[6rem] sm:max-w-[8rem]">
+              <Badge variant="default">$12,450</Badge>
+            </span>
           </CardHeader>
           <CardContent>
             <Progress value={60} className="h-2 rounded-full" />
@@ -63,12 +60,9 @@ export default function DashboardPage() {
             <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
               <Clock className="w-5 h-5 text-indigo-600" /> Next Payment
             </CardTitle>
-            <Badge
-              variant="destructive"
-              className="text-slate-50 bg-red-600 truncate max-w-[5rem] sm:max-w-[6rem]"
-            >
-              $350
-            </Badge>
+            <span className="text-slate-800 truncate max-w-[6rem] sm:max-w-[8rem]">
+              <Badge>$350</Badge>
+            </span>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-slate-600">Due in 5 days</p>
@@ -80,12 +74,9 @@ export default function DashboardPage() {
             <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
               <ArrowUp className="w-5 h-5 text-green-600" /> Payments This Month
             </CardTitle>
-            <Badge
-              variant="outline"
-              className="truncate max-w-[5rem] sm:max-w-[6rem]"
-            >
-              + $1,200
-            </Badge>
+            <span className="text-green-600 truncate max-w-[5rem] sm:max-w-[6rem]">
+              <Badge variant="default">+ $1,200</Badge>
+            </span>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-slate-600">3 payments completed</p>
@@ -133,9 +124,9 @@ export default function DashboardPage() {
               <CardTitle className="text-lg font-semibold flex items-center gap-2 shrink-0">
                 <DollarSign className="w-5 h-5 text-indigo-600" /> {loan.name}
               </CardTitle>
-              <Badge className="truncate max-w-[5rem] sm:max-w-[6rem]">
-                ${loan.balance}
-              </Badge>
+              <span className="truncate max-w-[5rem] sm:max-w-[6rem]">
+                <Badge>${loan.balance}</Badge>
+              </span>
             </CardHeader>
             <CardContent>
               <Progress value={loan.progress} className="h-2 rounded-full" />

@@ -1,25 +1,23 @@
-# backend/Dockerfile
-
-# 1. Use Node 20 LTS
+# Example Dockerfile for backend
 FROM node:20-alpine
 
-# 2. Set working directory
+# Set working directory
 WORKDIR /app
 
-# 3. Copy package files
+# Copy package files
 COPY package.json yarn.lock ./
 
-# 4. Install dependencies
-RUN yarn install --frozen-lockfile
+# Install dependencies inside container
+RUN yarn install --frozen-lockfile --force
 
-# 5. Copy the rest of the backend code
+# Copy the rest of the source code
 COPY . .
 
-# 6. Build TypeScript to dist/
-RUN yarn tsc
+# Build (if needed)
+RUN yarn build
 
-# 7. Expose backend port
+# Expose port
 EXPOSE 8080
 
-# 8. Start the server from dist
+# Start server
 CMD ["node", "dist/server.js"]
