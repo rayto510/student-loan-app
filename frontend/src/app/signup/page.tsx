@@ -1,10 +1,7 @@
-// app/signup/page.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signup } from "@/lib/auth";
-import Link from "next/link";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -18,11 +15,25 @@ export default function SignupPage() {
     setError("");
 
     try {
-      const res = await signup({ name, email, password });
-      localStorage.setItem("token", res.token);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Signup failed");
+      }
+
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || "Signup failed");
+      setError(err.message);
     }
   };
 
@@ -64,16 +75,15 @@ export default function SignupPage() {
         >
           Sign Up
         </button>
-
-        {/* Login link */}
         <p className="text-center text-sm text-slate-600">
           Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-indigo-600 hover:text-indigo-700 font-semibold"
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="text-indigo-600 hover:underline"
           >
             Login
-          </Link>
+          </button>
         </p>
       </form>
     </div>
