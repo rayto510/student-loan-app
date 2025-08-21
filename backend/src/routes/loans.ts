@@ -15,7 +15,7 @@ router.post("/", authenticate, addLoan);
 router.put("/:id", authenticate, updateLoan);
 router.delete("/:id", authenticate, deleteLoan);
 
-// Mount payments router under /:loanId/payments
-router.use("/:loanId/payments", paymentsRouter);
+// Mount payments router under /:id/payments
+router.use("/:id/payments", paymentsRouter);
 
 export default router;
